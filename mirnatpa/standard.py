@@ -96,6 +96,9 @@ class Mirdb:
 
 
 class Mirmap:
+	"""
+	miRmap
+	"""
 	def __init__(self, input_path):
 		self.input = input_path
 		self.name = "mirmap"
@@ -122,6 +125,9 @@ class Mirmap:
 
 
 class Mirwalk:
+	"""
+	miRWalk
+	"""
 	def __init__(self, input_path):
 		self.input = input_path
 		self.name = "mirwalk"
@@ -154,6 +160,9 @@ class Mirwalk:
 
 
 class Targetscan:
+	"""
+	TargetScan
+	"""
 	def __init__(self, input_path):
 		self.input = input_path
 		self.name = "targetscan"
@@ -223,6 +232,12 @@ def get_interaction_data(analysis_name, input_data_index):
 
 
 def order_by_mirna(interaction_data, genes):
+	"""
+	Collect all data referring to a miRNA in a single row.
+	:param interaction_data:
+	:param genes: list of genes
+	:return:
+	"""
 
 	header = ("mirna",)
 	for db in utils.BIO_DATABASES:

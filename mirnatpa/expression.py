@@ -1,5 +1,8 @@
+"""
+Extract and standardize expression data.
+"""
+
 import csv
-import numpy
 
 import utils
 
@@ -39,6 +42,12 @@ def extract_expression_data(regions):
 
 
 def save_expression_data(analysis_name, expression_data):
+	"""
+	Save expression data to results/expression-data.csv.
+	:param analysis_name:
+	:param expression_data:
+	:return:
+	"""
 	analysis_expression_data_path = utils.get_path(f"analyses/{analysis_name}/results/expression-data.csv")
 	with open(analysis_expression_data_path, mode="w+") as f:
 		csv_writer = csv.writer(f)

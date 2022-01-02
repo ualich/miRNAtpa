@@ -49,7 +49,7 @@ def run_analysis():
 	if len(sys.argv) == 1:
 		print("No analysis_name given.")
 		print_help()
-		return
+		sys.exit()
 	else:
 		analysis_name = sys.argv[1]
 		if len(sys.argv) > 2:
