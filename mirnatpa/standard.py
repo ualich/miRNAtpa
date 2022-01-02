@@ -16,7 +16,8 @@ def get_genes(interaction_data):
 	for row in interaction_data:
 		gene = row[1]
 		genes.add(gene)
-	return genes
+
+	return sorted(tuple(genes))
 
 
 def read_csv(file_path, conn):
@@ -42,7 +43,7 @@ class Diana:
 	def extract_data(self, row_stream):
 		for row in row_stream:
 			mirna = row[2]
-			score = round(float(row[3]), 5)
+			score = round(float(row[3]) + 0.5, 5)
 			gene = re.findall(r"\(([^()]+)\)", row[1])[0]
 			yield mirna, gene, score, self.name
 
@@ -81,7 +82,7 @@ class Mirdb:
 		for row in table_rows[1:]:
 			data_objects = row.findAll("td")
 			mirna = data_objects[3].text.strip()
-			score = round(float(data_objects[2].text) * self.normalization_factor, 5)
+			score = round(float(data_objects[2].text) * self.normalization_factor + 0.5, 5)
 			gene = data_objects[4].text.strip()
 			yield mirna, gene, score, self.name
 
@@ -108,7 +109,7 @@ class Mirmap:
 		for row in csv_reader:
 			mirna = row[0]
 			gene = row[1]
-			score = round(float(row[5]) * self.normalization_factor, 5)
+			score = round(float(row[5]) * self.normalization_factor + 0.5, 5)
 			yield mirna, gene, score, self.name
 
 	def standardize(self):
@@ -136,7 +137,7 @@ class Mirwalk:
 	def filter_rows(csv_reader):
 		mirna_list = list()
 		for row in csv_reader:
-			if row[0] not in mirna_list and len(row) == 21:
+			if row[0] not in mirna_list and len(row) in [20, 21]:
 				mirna_list.append(row[0])
 				yield row
 
@@ -153,7 +154,8 @@ class Mirwalk:
 			with open(file_path) as f:
 				csv_reader = csv.reader(f)
 				next(csv_reader)  # Skipping header
-				data_extract = self.extract_data(self.filter_rows(csv_reader))
+				filtered_rows = self.filter_rows(csv_reader)
+				data_extract = self.extract_data(filtered_rows)
 				for i in data_extract:
 					standardized_data.append(i)
 		return standardized_data
@@ -202,6 +204,12 @@ def get_rows(all_rows, mirna):
 
 
 def save_interaction_data(interaction_data, analysis_name):
+	"""
+	Save interaction data to results/interaction-data.csv.
+	:param interaction_data:
+	:param analysis_name:
+	:return:
+	"""
 	data_path = utils.get_path(f"analyses/{analysis_name}/results/interaction-data.csv")
 	with open(data_path, "w+") as f:
 		csv_writer = csv.writer(f)

@@ -39,6 +39,13 @@ def reformat_data(interaction_data, expression_data, genes):
 
 
 def save_all_data(all_data, genes, analysis_name):
+	"""
+	Save all data components to results/all-data.csv.
+	:param all_data: dict
+	:param genes:
+	:param analysis_name:
+	:return:
+	"""
 	rows = list()
 	for mirna, values in all_data.items():
 		rows.append((mirna,) + values)
@@ -56,6 +63,13 @@ def save_all_data(all_data, genes, analysis_name):
 
 
 def save_ranked_data(ranked_mirnas, genes, analysis_name):
+	"""
+	Save ranked miRNA scores to results/ranked-mirnas.csv.
+	:param ranked_mirnas:
+	:param genes:
+	:param analysis_name:
+	:return:
+	"""
 	data_path = utils.get_path(f"analyses/{analysis_name}/results/ranked-mirnas.csv")
 	header = ("mirna",) + tuple(genes) + ("expression", "total")
 	ranked_mirnas.insert(0, header)
@@ -65,16 +79,23 @@ def save_ranked_data(ranked_mirnas, genes, analysis_name):
 
 
 def rank_mirnas(all_data, genes):
+	"""
+	Calculate total score for each miRNA and sort rows in descending order.
+	:param all_data: dict
+	:param genes: list of genes
+	:return:
+	"""
 	condensed_rows = list()
 	for mirna, row in all_data.items():
 		mirna_score = 0
 		mirna_row = tuple()
-		for i in range(len(genes)):
-			gene_score = round(sum(list(row[i*5:i*5+5])), 5)
+		gene_nr = len(genes)
+		for i in range(gene_nr):
+			gene_score = round(sum([row[i + x * gene_nr] for x in range(5)]), 5)
 			mirna_score += gene_score
 			mirna_row += (gene_score,)
 		expression = row[-1]
-		total_score = round(expression * len(genes) + mirna_score, 5)
+		total_score = round(expression * (len(genes) * 0.4) + mirna_score, 5)
 		condensed_row = mirna, *mirna_row, row[-1], total_score
 		condensed_rows.append(condensed_row)
 
