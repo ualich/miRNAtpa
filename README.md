@@ -1,5 +1,25 @@
 # miRNAtpa
-Micro RNA target prodiction analysis.
+**Micro RNA target prediction analysis** (**miRNAtpa**) is a tool for predicting the intensity of gene regulation by miRNAs. The analysis considers both intermolecular interactions and tissue-specific expression levels of miRNA.
+
+There are 2 parameters that can be customized:
+* list of body regions
+* list of genes
+
+> **NOTE**: This tool does not provide fully automated analysis. Manual download of data is required.
+
+## Interaction data
+Data about interactions miRNAs have with specific genes and their gene products is obtained from 5 biological databases:
+
+* [DIANA microT](http://diana.imis.athena-innovation.gr/DianaTools/index.php?r=microT_CDS/index)
+* [miRDB](http://mirdb.org/)
+* [miRmap](https://mirmap.ezlab.org/app/)
+* [miRWalk](http://mirwalk.umm.uni-heidelberg.de/)
+* [TargetScan](http://www.targetscan.org/)
+
+## Expression data
+The expression of miRNA varies by tissue and developmental period of the organism.
+Expression data was obtained from 2016 study _Distribution of miRNA expression across human tissues_ by Ludwig et al. (DOI: 10.1093/nar/gkw116).
+
 
 ## Requirements
 
@@ -11,24 +31,35 @@ Micro RNA target prodiction analysis.
 ```bash
 git clone https://github.com/ualich/miRNAtpa.git
 cd miRNAtpa
-pip install .
+pip3 install .
 ```
 
 ## Usage
 
-To run new analysis, create a directory inside `analyses`. Add input data in the subdirectory `input`. Results will be generated in subdirecotry `results`.
+1. Prepare file architecture:
+   * Select _analysis name_. Use alphanumeric characters.
+   * Create _analysis directory_ inside `analyses`, use analysis name.
+   * Create a subdirectory `input` inside analysis directory.
 
-See directory `anayses/example` for exact filesystem structure.
 
-Run the command
+2. Create a subdirectory inside `input` for every biological database and download interaction data (see directory `anayses/example/input`):
+    * `diana`
+    * `mirdb`
+    * `mirmap`
+    * `mirwalk`
+    * `targetscan`
+   
 
-```bash
-python3 mirnatpa/run.py <analysis_name> <regions>
-```
+3. Run the command
 
-Where
+   ```bash
+   python3 mirnatpa/main.py <analysis_name> <regions>
+   ```
 
-* `analyses_name` - alphanumerical name of the analysis
-* `regions` - space separated names of regions used for expression analysis, possible values: 
+   Where
+   
+   * `analyses_name` - alphanumerical name of the analysis
+   * `regions` - space separated names of regions used for expression analysis, possible values can be found in the file `expression/regions.txt`
 
-Regions available: adipocyte_1, arachnoid_mater_1, artery_1, colon_1, small_intestine_1, dura_mater_1, brain_1, bladder_1, skin_1, myocardium_1, bone_1, liver_1, lung_1, stomach_1, spleen_1, muscle_1, gallbladder_1, fascia_1, epididymis_1, nerve_nervus_intercostalis_1, kidney_1, thyroid_1, testis_1, tunica_albuginea_1, myocardium_2, lung_2, liver_2, kidney_2, colon_2, muscle_2, small_intestine_duodenum_2, pancreas_2, small_intestine_jejunum_2, kidney_glandula_suprarenalis_2, brain_thalamus_2, bone_marrow_2, spinal_cord_2, pleura_2, brain_pituitary_gland_2, kidney_cortex_renalis_2, stomach_2, nerve_not_specified_2, esophagus_2, prostate_2, adipocyte_2, skin_2, spleen_2, brain_white_matter_2, brain_nucleus_caudatus_2, kidney_medulla_renalis_2, thyroid_2, brain_gray_matter_2, lymph_node_2, brain_cerebral_cortex_temporal_2, brain_cerebral_cortex_frontal_2, dura_mater_2, artery_2, brain_cerebral_cortex_occipital_2, vein_2, brain_cerebellum_2, testis_2
+
+4. Results will be generated inside analysis directory, in subdirectory `results`.
