@@ -42,7 +42,7 @@ class Diana:
 	def extract_data(self, row_stream):
 		for row in row_stream:
 			mirna = row[2]
-			score = float(row[3])
+			score = round(float(row[3]), 5)
 			gene = re.findall(r"\(([^()]+)\)", row[1])[0]
 			yield mirna, gene, score, self.name
 
@@ -81,7 +81,7 @@ class Mirdb:
 		for row in table_rows[1:]:
 			data_objects = row.findAll("td")
 			mirna = data_objects[3].text.strip()
-			score = float(data_objects[2].text) * self.normalization_factor
+			score = round(float(data_objects[2].text) * self.normalization_factor, 5)
 			gene = data_objects[4].text.strip()
 			yield mirna, gene, score, self.name
 
@@ -105,7 +105,7 @@ class Mirmap:
 		for row in csv_reader:
 			mirna = row[0]
 			gene = row[1]
-			score = float(row[5]) * self.normalization_factor
+			score = round(float(row[5]) * self.normalization_factor, 5)
 			yield mirna, gene, score, self.name
 
 	def standardize(self):
@@ -192,39 +192,14 @@ def get_rows(all_rows, mirna):
 	return rows
 
 
-# def remove_duplicates(all_data):
-# 	mirnas = set()
-# 	for row in all_data:
-# 		mirna = row[0]
-# 		mirnas.add(mirna)
-#
-# 	repair_index = dict()
-# 	for mirna in mirnas:
-# 		if mirna.count("-") == 3 and mirna[-1] == "p":
-# 			test_mirna = mirna.rsplit("-", 1)[0]
-# 			if test_mirna in mirnas:
-# 				repair_index[mirna] = test_mirna
-#
-# 	fresh_data = list()
-# 	for row in all_data:
-# 		mirna = row[0]
-# 		if mirna in repair_index:
-# 			new_row = repair_index[mirna], *row[1:]
-# 			fresh_data.append(new_row)
-# 		else:
-# 			fresh_data.append(row)
-#
-# 	return fresh_data
-
-
 def save_interaction_data(interaction_data, analysis_name):
 	data_path = utils.get_path(f"analyses/{analysis_name}/results/interaction-data.csv")
 	with open(data_path, "w+") as f:
 		csv_writer = csv.writer(f)
-		csv_writer.writerows(interaction_data)
+		csv_writer.writerows([("miRNA", "gene", "score", "database")] + interaction_data)
 
 
-def get_interaction_data(analysis_name, data_found):
+def get_interaction_data(analysis_name, input_data_index):
 	index = {
 		"diana": Diana,
 		"mirdb": Mirdb,
@@ -234,8 +209,7 @@ def get_interaction_data(analysis_name, data_found):
 	}
 
 	interaction_data = list()
-	print(data_found)
-	for database, input_path in data_found.items():
+	for database, input_path in input_data_index.items():
 		print(f"Preparing {database} data...", end="")
 		standardized_data = index[database](input_path).standardize()
 
@@ -277,8 +251,20 @@ def order_by_mirna(interaction_data, genes):
 	return rows
 
 
-def run(analysis_name, data_found):
-	interaction_data = get_interaction_data(analysis_name, data_found)
+def run(analysis_name, input_data_index):
+	"""
+	Standardize all the input data and assemble a list of tuples
+	named `interaction_data`:
+		[0] - miRNA
+		[1] - gene
+		[2] - score
+		[3] - database
+
+	:param analysis_name:
+	:param input_data_index:
+	:return:
+	"""
+	interaction_data = get_interaction_data(analysis_name, input_data_index)
 	save_interaction_data(interaction_data, analysis_name)
 	genes = get_genes(interaction_data)
 	interaction_data = order_by_mirna(interaction_data, genes)

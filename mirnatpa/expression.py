@@ -30,6 +30,7 @@ def extract_expression_data(regions):
 			for region_index in region_indexes:
 				expression_values += (float(row[region_index]),)
 			expression_level = sum(expression_values) / len(expression_values)
+			expression_level = round(expression_level, 5)
 
 			expression_row = mirna, expression_level
 			expression_data.append(expression_row)
@@ -41,7 +42,7 @@ def save_expression_data(analysis_name, expression_data):
 	analysis_expression_data_path = utils.get_path(f"analyses/{analysis_name}/results/expression-data.csv")
 	with open(analysis_expression_data_path, mode="w+") as f:
 		csv_writer = csv.writer(f)
-		csv_writer.writerows(expression_data)
+		csv_writer.writerows([("miRNA", "expression")] + expression_data)
 
 
 def run(analysis_name, regions):

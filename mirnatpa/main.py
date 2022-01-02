@@ -8,7 +8,12 @@ import standard
 import utils
 
 
-def get_data(analysis_name):
+def get_input_data(analysis_name):
+	"""
+	Get input data for analysis.
+	:param analysis_name:
+	:return:
+	"""
 	# Validate the name
 	if not analysis_name.isalnum():
 		print(f"Invalid analysis_name: {analysis_name}")
@@ -39,22 +44,12 @@ def print_help():
 	print("\tanalysis_name - the name of the folder, where input\n\tdata is stored, only use alphanumerical characters")
 
 
-def run_analysis(analysis_name, regions):
-	# Prepare result folder
-	folder_name = utils.get_path(f"analyses/{analysis_name}/results")
-	os.makedirs(folder_name, exist_ok=True)
-
-	data_found = get_data(analysis_name)
-	interaction_data, genes = standard.run(analysis_name, data_found)
-	expression_data = expression.run(analysis_name, regions)
-	rank.rank(interaction_data, expression_data, genes, analysis_name)
-
-
-if __name__ == "__main__":
+def run_analysis():
 	# Parse arguments
 	if len(sys.argv) == 1:
 		print("No analysis_name given.")
 		print_help()
+		return
 	else:
 		analysis_name = sys.argv[1]
 		if len(sys.argv) > 2:
@@ -62,4 +57,17 @@ if __name__ == "__main__":
 		else:
 			# Default regions - frontal cortex miRNA expression
 			regions = ["brain_1", "brain_cerebral_cortex_frontal_2"]
-		run_analysis(analysis_name, regions)
+
+	# Prepare results folder
+	folder_name = utils.get_path(f"analyses/{analysis_name}/results")
+	os.makedirs(folder_name, exist_ok=True)
+
+	# Main
+	input_data_index = get_input_data(analysis_name)
+	interaction_data, genes = standard.run(analysis_name, input_data_index)
+	expression_data = expression.run(analysis_name, regions)
+	rank.rank(interaction_data, expression_data, genes, analysis_name)
+
+
+if __name__ == "__main__":
+	run_analysis()

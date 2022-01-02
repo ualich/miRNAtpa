@@ -28,13 +28,13 @@ def reformat_data(interaction_data, expression_data, genes):
 			all_data[mirna] = all_data_row
 
 	rows = list()
-	for mirna in all_data:
-		rows.append(all_data[mirna])
+	for mirna, values in all_data.items():
+		rows.append((mirna,) + values)
 	return rows
 
 
 def save_data(all_data, genes, analysis_name):
-	data_path = utils.get_path(f"analyses/{analysis_name}/results/all_data.csv")
+	data_path = utils.get_path(f"analyses/{analysis_name}/results/all-data.csv")
 	header = ("mirna",)
 	for db in utils.BIO_DATABASES:
 		for gene in genes:
