@@ -43,11 +43,11 @@ pip3 install .
 
 
 2. Create a subdirectory inside `input` for every biological database and download interaction data (see directory `anayses/example/input`):
-    * `diana`
-    * `mirdb`
-    * `mirmap`
-    * `mirwalk`
-    * `targetscan`
+    * `diana` - download results as CSV file
+    * `mirdb` - download results as HTML file (save webpage)
+    * `mirmap` - download results as CSV file
+    * `mirwalk` - export results as CSV file
+    * `targetscan` - download table as TXT file
    
 
 3. Run the command
