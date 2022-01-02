@@ -1,5 +1,5 @@
 # miRNAtpa
-**Micro RNA target prediction analysis** (**miRNAtpa**) is a tool for predicting the intensity of gene regulation by miRNAs. The analysis considers both intermolecular interactions and tissue-specific expression levels of miRNA.
+**Micro RNA target prediction analysis** (**miRNAtpa**) is a tool for predicting the importance of each miRNA in gene regulation when specific parameters are given. The analysis considers both intermolecular interactions and tissue-specific expression levels of miRNA.
 
 There are 2 parameters that can be customized:
 * list of body regions
