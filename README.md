@@ -3,7 +3,7 @@
 
 There are 2 parameters that can be customized:
 * list of body regions
-* list of genes
+* list of target genes
 
 > **NOTE**: This tool does not provide fully automated analysis. Manual download of data is required.
 
